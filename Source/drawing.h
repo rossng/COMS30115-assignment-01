@@ -17,13 +17,8 @@ using glm::mat3;
 
 const int SCREEN_WIDTH = 500;
 const int SCREEN_HEIGHT = 500;
-extern SDL_Surface *screen;
-extern int t;
-
-void Update();
-
-void Draw();
-
 void Interpolate(float a, float b, vector<float> &result);
+
+void Interpolate(vec3 a, vec3 b, vector<vec3> &result);
 
 #endif //PROJECT_DRAWING_CPP_H
