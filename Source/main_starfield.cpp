@@ -68,8 +68,9 @@ void Draw(vector<vec3>& stars) {
     for (auto star : stars) {
         float u = focal_length * (star.x / star.z) + (SCREEN_WIDTH / 2.0f);
         float v = focal_length * (star.y / star.z) + (SCREEN_HEIGHT / 2.0f);
+        vec3 colour = 0.2f * vec3(1, 1, 1) / (star.z * star.z);
 
-        PutPixelSDL(screen, (int)u, (int)v, vec3(1.0, 1.0, 1.0));
+        PutPixelSDL(screen, (int)u, (int)v, colour);
     }
 
     if (SDL_MUSTLOCK(screen))
