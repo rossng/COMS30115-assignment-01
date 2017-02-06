@@ -2,7 +2,7 @@
 
 SDL_Surface *screen;
 int t;
-const float v = 0.001;
+const float v = 0.0005;
 
 void Update(vector<vec3>& stars);
 
@@ -64,13 +64,30 @@ void Draw(vector<vec3>& stars) {
 
     SDL_FillRect(screen, 0, 0);
 
-    float focal_length = SCREEN_WIDTH / 2.0f;
+    glm::vec3 camera_position = glm::vec3(0.0f, 1.1f, 0.5f);
+
+    glm::mat4 projection = glm::perspective(glm::radians(90.0f), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
+    glm::mat4 view = glm::lookAt(camera_position, glm::vec3(0.0f, 0.0f, 0.5f), glm::vec3(0.0f, 0.0f, 1.0f));
+#ifdef DEBUG
+    std::cout << glm::to_string(projection) << std::endl;
+    std::cout << glm::to_string(view) << std::endl;
+#endif
+
     for (auto star : stars) {
-        float u = focal_length * (star.x / star.z) + (SCREEN_WIDTH / 2.0f);
-        float v = focal_length * (star.y / star.z) + (SCREEN_HEIGHT / 2.0f);
-        vec3 colour = 0.2f * vec3(1, 1, 1) / (star.z * star.z);
+        glm::mat4 model = glm::translate(glm::mat4(1.0), star);
+        glm::mat4 mvp = projection * view * model;
+        glm::vec4 position = mvp * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+        vec3 colour = vec3(1.0f, 1.0f, 1.0f) / (1.0f + glm::distance(camera_position, star) * glm::distance(camera_position, star));
+
+        float u = (SCREEN_WIDTH / 2.0f) * (1 - position.x);
+        float v = (SCREEN_HEIGHT / 2.0f) * (1 - position.y);
 
         PutPixelSDL(screen, (int)u, (int)v, colour);
+#ifdef DEBUG
+        std::cout << glm::to_string(model) << std::endl;
+        std::cout << glm::to_string(mvp) << std::endl;
+        std::cout << glm::to_string(position) << std::endl;
+#endif
     }
 
     if (SDL_MUSTLOCK(screen))
